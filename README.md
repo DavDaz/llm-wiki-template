@@ -6,17 +6,75 @@ Template para crear wikis de conocimiento mantenidos por IA, basado en el patró
 
 ---
 
-## Concepto
+## Cómo funciona
 
-En lugar de RAG (buscar en documentos crudos cada vez que preguntas), este sistema compila el conocimiento **una vez** en páginas Markdown estructuradas. La IA actualiza esas páginas cuando llegan fuentes nuevas. Cuando preguntas, lee el índice y abre solo las páginas relevantes.
+### Primera vez — Setup
 
+```mermaid
+flowchart TD
+    A([Tú]) --> B["git clone llm-wiki-template"]
+    B --> C["./setup.sh"]
+
+    C --> D{"Preguntas<br/>interactivas"}
+    D --> D1["📝 Nombre del wiki<br/>ej: MIDES RENAB"]
+    D --> D2["🏷️ Entidades primarias<br/>ej: usuario, rol, permiso"]
+    D --> D3["📄 Tipos de página<br/>ej: proceso, referencia"]
+    D --> D4["⚙️ Convenciones<br/>del dominio"]
+
+    D1 & D2 & D3 & D4 --> E["Genera CLAUDE.md<br/>configurado para tu dominio"]
+
+    E --> F["Repo Git listo<br/>con estructura completa"]
+
+    F --> G["📂 raw/<br/>Vacío — tus fuentes van aquí"]
+    F --> H["📂 wiki/<br/>index.md · log.md vacíos"]
+    F --> I["⚙️ .claude/commands/<br/>wiki-ingest · wiki-query · wiki-lint"]
+    F --> J["🧠 CLAUDE.md<br/>Cerebro del sistema"]
+
+    style A fill:#4f46e5,color:#fff
+    style F fill:#059669,color:#fff
+    style J fill:#d97706,color:#fff
 ```
-raw/          →  /wiki-ingest  →  wiki/
-(fuentes          (la IA compila)   (conocimiento estructurado)
-inmutables)
 
-wiki/index.md  →  /wiki-query  →  Respuesta citada
-(la IA navega)
+---
+
+### Flujo continuo — Agregar conocimiento y consultar
+
+```mermaid
+flowchart TD
+    A([Tú]) --> B["Copias un documento<br/>a raw/"]
+
+    B --> C["/wiki-ingest"]
+
+    subgraph IA ["La IA hace esto automáticamente"]
+        C --> D["Lee CLAUDE.md<br/>(reglas del dominio)"]
+        D --> E["Lee wiki/log.md<br/>(¿ya fue procesado?)"]
+        E --> F["Analiza el documento<br/>e identifica conceptos"]
+        F --> G{"¿Existe una página<br/>para este concepto?"}
+        G -- "Sí" --> H["Actualiza página<br/>existente"]
+        G -- "No" --> I["Crea página nueva<br/>con frontmatter"]
+        H & I --> J["Agrega wikilinks<br/>entre páginas relacionadas"]
+        J --> K["Actualiza wiki/index.md"]
+        K --> L["Registra en wiki/log.md"]
+    end
+
+    L --> M([Conocimiento compilado])
+
+    M --> N["/wiki-query<br/>¿Qué permisos tiene<br/>el rol Supervisor?"]
+
+    subgraph QUERY ["La IA responde así"]
+        N --> O["Lee wiki/index.md"]
+        O --> P["Abre solo las páginas<br/>relevantes (máx. 5)"]
+        P --> Q["Responde con citas<br/>pagina-fuente"]
+    end
+
+    Q --> R([Respuesta con referencias])
+
+    M --> S["/wiki-lint<br/>(periódico)"]
+    S --> T["Reporte wiki/lint-YYYY-MM-DD.md<br/>Errores · Advertencias · Info"]
+
+    style A fill:#4f46e5,color:#fff
+    style M fill:#059669,color:#fff
+    style R fill:#059669,color:#fff
 ```
 
 ---
@@ -24,12 +82,14 @@ wiki/index.md  →  /wiki-query  →  Respuesta citada
 ## Cuándo usar este patrón
 
 ✅ **Ideal para:**
+
 - Documentación de sistemas internos (hasta ~200 artículos)
 - Knowledge base de equipos pequeños (2-10 personas)
 - Procesos, roles, permisos, manuales operativos
 - Cualquier dominio donde el conocimiento se acumula con el tiempo
 
 ⚠️ **Considera RAG si:**
+
 - Tienes miles de documentos que cambian constantemente
 - Necesitas búsqueda semántica sobre texto libre masivo
 
@@ -69,6 +129,7 @@ chmod +x setup.sh
 ```
 
 El script pregunta:
+
 - **Nombre del wiki** — ej: `MIDES RENAB`
 - **Slug** — ej: `mides-renab`
 - **Idioma** — ej: `es`
@@ -120,7 +181,9 @@ Genera un reporte en `wiki/lint-YYYY-MM-DD.md` con errores, advertencias e info.
 ## Archivos clave
 
 ### `CLAUDE.md`
+
 El archivo más importante. Define:
+
 - Las entidades y tipos de página del dominio
 - Las reglas de nomenclatura (slugs)
 - Las reglas de granularidad (cuándo crear vs actualizar)
@@ -130,9 +193,11 @@ El archivo más importante. Define:
 La IA lo lee antes de cualquier operación. Si el dominio evoluciona, se actualiza aquí y se corre `/wiki-lint` para detectar páginas que ya no cumplen las nuevas reglas.
 
 ### `wiki/index.md`
+
 Catálogo central. Una línea por página. La IA lo lee primero en cada query para saber qué existe antes de abrir páginas individuales.
 
 ### `wiki/log.md`
+
 Historial append-only de todas las operaciones. Nunca se modifica, solo se le agrega al final. Sirve para saber qué fuentes ya fueron procesadas.
 
 ---
@@ -153,14 +218,17 @@ actualizado: 2026-04-21
 # Crear Usuario
 
 ## Precondiciones
+
 - El solicitante debe tener rol [[rol-administrador]]
 - El usuario a crear no debe existir en [[sistema-renab]]
 
 ## Pasos
+
 1. Ingresar al módulo de Gestión de Usuarios
 2. ...
 
 ## Ver también
+
 - [[asignar-rol]]
 - [[politica-acceso]]
 ```
