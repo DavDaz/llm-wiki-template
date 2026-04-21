@@ -1,8 +1,8 @@
-# llm-wiki-template
+# llm-wiki-generator
 
-Template para crear wikis de conocimiento mantenidos por IA, basado en el patrón LLM Wiki de Karpathy (abril 2026).
+Generador de wikis de conocimiento mantenidos por IA, basado en el patrón LLM Wiki de Karpathy (abril 2026).
 
-**Un comando crea tu wiki. La IA lo mantiene. El conocimiento se acumula.**
+**Un comando genera tu wiki. La IA lo mantiene. El conocimiento se acumula.**
 
 ---
 
@@ -12,7 +12,7 @@ Template para crear wikis de conocimiento mantenidos por IA, basado en el patró
 
 ```mermaid
 flowchart TD
-    A([Tú]) --> B["git clone llm-wiki-template"]
+    A([Tú]) --> B["git clone llm-wiki-generator"]
     B --> C["./setup.sh"]
 
     C --> D{"Preguntas<br/>interactivas"}
@@ -95,18 +95,13 @@ flowchart TD
 
 ---
 
-## Estructura del template
+## Estructura del generador
 
 ```
-llm-wiki-template/
+llm-wiki-generator/
 ├── README.md                  ← este archivo
 ├── setup.sh                   ← genera un wiki nuevo
 ├── CLAUDE.md.template         ← cerebro del sistema (con placeholders)
-├── wiki/
-│   ├── index.md               ← catálogo vacío
-│   └── log.md                 ← log vacío
-├── raw/
-│   └── .gitkeep
 └── .claude/
     └── commands/
         ├── wiki-ingest.md     ← skill: procesar fuentes nuevas
@@ -119,9 +114,9 @@ llm-wiki-template/
 ## Crear un wiki nuevo
 
 ```bash
-# 1. Clonar o descargar el template
-git clone https://github.com/tu-usuario/llm-wiki-template
-cd llm-wiki-template
+# 1. Clonar el generador
+git clone https://github.com/tu-usuario/llm-wiki-generator
+cd llm-wiki-generator
 
 # 2. Ejecutar setup
 chmod +x setup.sh
