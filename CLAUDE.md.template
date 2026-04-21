@@ -1,0 +1,215 @@
+# {{WIKI_NAME}} — Wiki Schema
+
+> Este archivo es el cerebro del sistema. Lo lee la IA antes de cualquier operación.
+> No borrar. No renombrar. Actualizar cuando el dominio evolucione.
+
+---
+
+## Identidad del dominio
+
+```yaml
+nombre: {{WIKI_NAME}}
+idioma: {{LANGUAGE}}
+creado: {{CREATED_DATE}}
+entidades_primarias:
+{{ENTITIES_LIST}}
+tipos_de_pagina:
+{{PAGE_TYPES_LIST}}
+```
+
+---
+
+## Arquitectura del wiki
+
+```
+{{WIKI_ROOT}}/
+├── CLAUDE.md          ← este archivo (instrucciones para la IA)
+├── raw/               ← fuentes originales, NUNCA modificar
+├── wiki/
+│   ├── index.md       ← catálogo central, una línea por página
+│   ├── log.md         ← historial append-only de operaciones
+│   └── [páginas].md   ← conocimiento compilado
+└── .claude/
+    └── commands/
+        ├── wiki-ingest.md
+        ├── wiki-query.md
+        └── wiki-lint.md
+```
+
+### Regla fundamental
+- `raw/` es **inmutable**. La IA nunca modifica ni borra archivos en `raw/`.
+- `wiki/` es **propiedad de la IA**. La IA crea, actualiza y enlaza páginas aquí.
+- `CLAUDE.md` es **co-evolucionado**. Humano y IA lo actualizan juntos cuando el dominio cambia.
+
+---
+
+## Tipos de página
+
+Cada página en `wiki/` tiene exactamente uno de estos tipos en su frontmatter:
+
+{{PAGE_TYPES_DETAIL}}
+
+---
+
+## Frontmatter obligatorio
+
+Toda página en `wiki/` debe comenzar con:
+
+```yaml
+---
+tipo: [uno de los tipos definidos arriba]
+titulo: [nombre legible por humanos]
+dominio: {{WIKI_SLUG}}
+status: vigente | borrador | deprecado
+confianza: alta | media | baja
+fuentes: [lista de archivos en raw/ que originaron esta página]
+actualizado: YYYY-MM-DD
+---
+```
+
+**Reglas de `confianza`:**
+- `alta` → respaldada por 2+ fuentes en `raw/` o confirmada manualmente por un humano
+- `media` → respaldada por 1 fuente o inferida de contexto claro
+- `baja` → inferida, sin fuente directa — incluir nota `> ⚠️ Confianza baja: pendiente verificación`
+
+**Reglas de `status`:**
+- `vigente` → información actual y verificada
+- `borrador` → creada en ingest, pendiente revisión humana
+- `deprecado` → ya no aplica, debe incluir `ver_sucesor: [[nombre-pagina]]`
+
+---
+
+## Reglas de nomenclatura de páginas
+
+Los slugs (nombres de archivo) siguen estas reglas **sin excepción**:
+
+1. **kebab-case** — solo minúsculas, guiones, sin acentos ni caracteres especiales
+2. **Sin artículos** — no "la-", "el-", "los-"
+3. **Verbo para procesos, sustantivo para entidades y referencias**
+
+| Tipo | Formato | Ejemplo |
+|---|---|---|
+| proceso | `verbo-objeto.md` | `crear-usuario.md` |
+| referencia | `sustantivo.md` | `roles.md` |
+| entidad | `nombre-entidad.md` | `sistema-renab.md` |
+| politica | `politica-tema.md` | `politica-acceso.md` |
+
+**Prohibido:**
+- ❌ `creacion-de-usuario.md` (artículo "de")
+- ❌ `CrearUsuario.md` (camelCase)
+- ❌ `usuario_roles.md` (underscore)
+- ❌ `doc-v2-final.md` (versionado en nombre)
+
+---
+
+## Reglas de granularidad
+
+**Una página = un concepto autónomo.**
+
+Un concepto es autónomo si puede explicarse sin depender del contexto de otro concepto.
+
+- **Tamaño máximo:** ~500 palabras. Si crece más → dividir.
+- **Overlap:** Si dos páginas tienen >50% de contenido común → fusionar.
+- **Relaciones:** Usar `[[wikilinks]]` en lugar de duplicar contenido.
+
+```markdown
+❌ MAL — duplicar contenido
+# roles.md
+El rol Supervisor puede crear usuarios. Para crear un usuario se debe...
+[repite los pasos de crear-usuario.md]
+
+✅ BIEN — referenciar
+# roles.md
+El rol Supervisor puede [[crear-usuario]].
+```
+
+---
+
+## Reglas de operación: INGEST
+
+Cuando se ejecuta `/wiki-ingest`:
+
+1. **Leer** todos los archivos nuevos en `raw/` que no aparezcan aún en `log.md`
+2. **Por cada archivo fuente:**
+   a. Identificar qué entidades, procesos y referencias menciona
+   b. Por cada concepto identificado:
+      - Buscar en `index.md` si ya existe una página con ese concepto
+      - Si existe → actualizar la página existente, no crear duplicado
+      - Si no existe → crear página nueva con frontmatter completo
+   c. Agregar `[[wikilinks]]` bidireccionales entre páginas relacionadas
+   d. Si hay contradicción con contenido existente → anotar con bloque `> ⚠️ Contradicción detectada: [descripción]` y `confianza: baja`
+3. **Actualizar** `wiki/index.md` con cada página nueva o modificada
+4. **Registrar** en `wiki/log.md` con formato append:
+   ```
+   ## YYYY-MM-DD HH:MM — ingest
+   Fuente: raw/nombre-archivo.ext
+   Páginas creadas: [lista]
+   Páginas actualizadas: [lista]
+   Contradicciones: [lista o "ninguna"]
+   ```
+5. **Nunca** borrar ni modificar archivos en `raw/`
+
+---
+
+## Reglas de operación: QUERY
+
+Cuando se ejecuta `/wiki-query`:
+
+1. **Leer** `wiki/index.md` completo primero — nunca responder de memoria
+2. **Identificar** qué páginas son relevantes para la pregunta
+3. **Abrir** solo esas páginas (máximo 5 para mantener contexto manejable)
+4. **Responder** citando las páginas usadas con `[[wikilinks]]`
+5. **Ofrecer** guardar la respuesta como nueva página si aporta conocimiento nuevo no existente
+6. **Si la información no está en el wiki** → decirlo explícitamente, no inventar
+
+```markdown
+Formato de respuesta:
+[Respuesta basada en el wiki]
+
+Fuentes consultadas: [[pagina-1]], [[pagina-2]]
+¿Deseas guardar esta respuesta como nueva página en el wiki?
+```
+
+---
+
+## Reglas de operación: LINT
+
+Cuando se ejecuta `/wiki-lint`:
+
+Revisar y reportar con severidad:
+
+**🔴 Error (debe corregirse):**
+- Páginas sin frontmatter o con frontmatter incompleto
+- Slugs que no siguen las reglas de nomenclatura
+- `[[wikilinks]]` rotos (apuntan a páginas que no existen)
+- Páginas con `status: deprecado` sin `ver_sucesor`
+
+**🟡 Advertencia (debería corregirse):**
+- Páginas con `confianza: baja` sin nota de advertencia visible
+- Páginas con `status: borrador` de más de 30 días sin revisión
+- Páginas huérfanas (no referenciadas por ninguna otra página)
+- Conceptos mencionados en múltiples páginas sin página propia
+
+**🔵 Info (para revisar):**
+- Páginas largas (>500 palabras) que podrían dividirse
+- Grupos de páginas sin cross-links entre sí
+- Fuentes en `raw/` sin entrada en `log.md`
+
+Guardar reporte en: `wiki/lint-YYYY-MM-DD.md`
+
+---
+
+## Convenciones específicas del dominio
+
+{{DOMAIN_CONVENTIONS}}
+
+---
+
+## Historial de cambios a este schema
+
+| Fecha | Cambio | Motivo |
+|---|---|---|
+| {{CREATED_DATE}} | Creación inicial | Setup del wiki |
+
+> Cuando el dominio evolucione y este schema cambie, agregar una fila aquí
+> y ejecutar `/wiki-lint` para detectar páginas que ya no cumplen las nuevas reglas.
