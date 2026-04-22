@@ -1,3 +1,6 @@
 # Mac temporary files
 .DS_Store
 
+# Go build output
+bin/
+
