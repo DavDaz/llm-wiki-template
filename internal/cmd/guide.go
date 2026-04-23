@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"os"
 
-	"charm.land/glamour/v2"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 
 	"github.com/DavDaz/llm-wiki-generator/internal/templates"
+	"github.com/DavDaz/llm-wiki-generator/internal/tui/viewer"
 )
 
 var guideCmd = &cobra.Command{
 	Use:   "guide",
-	Short: "Show the conceptual guide — what each field means and why it matters",
+	Short: "Browse the conceptual guide with keyboard navigation",
 	RunE:  runGuide,
 }
 
@@ -26,13 +27,14 @@ func runGuide(_ *cobra.Command, _ []string) error {
 		return fmt.Errorf("read guide: %w", err)
 	}
 
-	out, err := glamour.RenderWithEnvironmentConfig(string(raw))
+	m, err := viewer.New(string(raw))
 	if err != nil {
-		// fallback: print raw if glamour fails (e.g. no TTY)
+		// fallback: print raw if TUI fails (e.g. no TTY)
 		fmt.Fprintln(os.Stdout, string(raw))
 		return nil
 	}
 
-	fmt.Print(out)
-	return nil
+	p := tea.NewProgram(m, tea.WithAltScreen())
+	_, err = p.Run()
+	return err
 }
