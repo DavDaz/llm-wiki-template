@@ -1,4 +1,5 @@
 ---
+name: wiki-lint
 description: Audita el wiki completo y genera un reporte de salud con errores, advertencias e info.
 ---
 

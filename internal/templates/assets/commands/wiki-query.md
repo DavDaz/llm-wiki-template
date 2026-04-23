@@ -1,4 +1,5 @@
 ---
+name: wiki-query
 description: Responde preguntas usando exclusivamente el conocimiento compilado en wiki/.
 argument-hint: [tu pregunta]
 ---

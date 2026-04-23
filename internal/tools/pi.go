@@ -9,6 +9,7 @@ import (
 )
 
 const piPromptsDir = ".pi/prompts"
+const piPromptsTree = "└── .pi/prompts/\n    ├── wiki-ingest.md\n    ├── wiki-query.md\n    └── wiki-lint.md"
 
 // PiTool implements ToolSupport for Pi.
 type PiTool struct{}
@@ -29,7 +30,7 @@ func (PiTool) Install(wikiRoot string, m *manifest.Manifest) error {
 		return fmt.Errorf("create %s: %w", promptsDir, err)
 	}
 
-	content, err := renderSchema(m, piPromptsDir, "AGENTS.md")
+	content, err := renderSchema(m, piPromptsDir, piPromptsTree, "AGENTS.md")
 	if err != nil {
 		return err
 	}
@@ -37,7 +38,7 @@ func (PiTool) Install(wikiRoot string, m *manifest.Manifest) error {
 		return fmt.Errorf("write AGENTS.md: %w", err)
 	}
 
-	return copyCommands(promptsDir)
+	return copyCommandFiles(promptsDir)
 }
 
 func (PiTool) Uninstall(wikiRoot string, m *manifest.Manifest) error {

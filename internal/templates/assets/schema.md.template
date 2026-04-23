@@ -29,10 +29,7 @@ tipos_de_pagina:
 │   ├── index.md       ← catálogo central, una línea por página
 │   ├── log.md         ← historial append-only de operaciones
 │   └── [páginas].md   ← conocimiento compilado
-└── {{COMMANDS_DIR}}/
-    ├── wiki-ingest.md
-    ├── wiki-query.md
-    └── wiki-lint.md
+{{COMMANDS_TREE}}
 ```
 
 ### Regla fundamental

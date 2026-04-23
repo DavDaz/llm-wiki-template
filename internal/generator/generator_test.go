@@ -44,11 +44,11 @@ func TestInit_ClaudeCodeOnly(t *testing.T) {
 	assertExists(t, filepath.Join(wikiRoot, "wiki.toml"))
 	assertExists(t, filepath.Join(wikiRoot, ".gitignore"))
 
-	// Claude-only files.
+	// Claude-only files (new skills format).
 	assertExists(t, filepath.Join(wikiRoot, "CLAUDE.md"))
-	assertExists(t, filepath.Join(wikiRoot, ".claude", "commands", "wiki-ingest.md"))
-	assertExists(t, filepath.Join(wikiRoot, ".claude", "commands", "wiki-query.md"))
-	assertExists(t, filepath.Join(wikiRoot, ".claude", "commands", "wiki-lint.md"))
+	assertExists(t, filepath.Join(wikiRoot, ".claude", "skills", "wiki-ingest", "SKILL.md"))
+	assertExists(t, filepath.Join(wikiRoot, ".claude", "skills", "wiki-query", "SKILL.md"))
+	assertExists(t, filepath.Join(wikiRoot, ".claude", "skills", "wiki-lint", "SKILL.md"))
 
 	// No other tool files.
 	assertAbsent(t, filepath.Join(wikiRoot, "AGENTS.md"))
@@ -93,7 +93,7 @@ func TestInit_AllTools(t *testing.T) {
 	wikiRoot := filepath.Join(dir, "legal-wiki")
 	assertExists(t, filepath.Join(wikiRoot, "CLAUDE.md"))
 	assertExists(t, filepath.Join(wikiRoot, "AGENTS.md"))
-	assertExists(t, filepath.Join(wikiRoot, ".claude", "commands", "wiki-ingest.md"))
+	assertExists(t, filepath.Join(wikiRoot, ".claude", "skills", "wiki-ingest", "SKILL.md"))
 	assertExists(t, filepath.Join(wikiRoot, ".opencode", "commands", "wiki-ingest.md"))
 	assertExists(t, filepath.Join(wikiRoot, ".pi", "prompts", "wiki-ingest.md"))
 }

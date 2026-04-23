@@ -1,4 +1,5 @@
 ---
+name: wiki-ingest
 description: Procesa archivos nuevos en raw/ y los compila en el wiki. Úsalo cuando agregues documentos a raw/.
 argument-hint: [archivo opcional]
 ---

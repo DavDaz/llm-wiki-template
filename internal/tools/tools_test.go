@@ -32,17 +32,25 @@ func TestClaudeTool_InstallUninstall(t *testing.T) {
 	require.NoError(t, tool.Install(dir, m))
 	assert.True(t, tool.IsInstalled(dir))
 
-	// Verify expected files exist.
+	// Verify expected files exist (new skills format).
 	assertFileExists(t, filepath.Join(dir, "CLAUDE.md"))
-	assertFileExists(t, filepath.Join(dir, ".claude/commands/wiki-ingest.md"))
-	assertFileExists(t, filepath.Join(dir, ".claude/commands/wiki-query.md"))
-	assertFileExists(t, filepath.Join(dir, ".claude/commands/wiki-lint.md"))
+	assertFileExists(t, filepath.Join(dir, ".claude/skills/wiki-ingest/SKILL.md"))
+	assertFileExists(t, filepath.Join(dir, ".claude/skills/wiki-query/SKILL.md"))
+	assertFileExists(t, filepath.Join(dir, ".claude/skills/wiki-lint/SKILL.md"))
 
 	// CLAUDE.md must contain the wiki name.
 	assertFileContains(t, filepath.Join(dir, "CLAUDE.md"), "Test Wiki")
 
+	// Legacy .claude/commands/ must not be created.
+	assertFileAbsent(t, filepath.Join(dir, ".claude/commands"))
+
 	// Idempotent install.
 	require.NoError(t, tool.Install(dir, m))
+
+	// Migration: legacy .claude/commands/ dir is removed on re-install.
+	require.NoError(t, os.MkdirAll(filepath.Join(dir, ".claude/commands"), 0o755))
+	require.NoError(t, tool.Install(dir, m))
+	assertFileAbsent(t, filepath.Join(dir, ".claude/commands"))
 
 	// Uninstall.
 	m.Tools.ClaudeCode = false

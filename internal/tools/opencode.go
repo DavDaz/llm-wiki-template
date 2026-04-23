@@ -9,6 +9,7 @@ import (
 )
 
 const opencodeCommandsDir = ".opencode/commands"
+const opencodeCommandsTree = "└── .opencode/commands/\n    ├── wiki-ingest.md\n    ├── wiki-query.md\n    └── wiki-lint.md"
 
 // OpenCodeTool implements ToolSupport for OpenCode.
 type OpenCodeTool struct{}
@@ -29,7 +30,7 @@ func (OpenCodeTool) Install(wikiRoot string, m *manifest.Manifest) error {
 		return fmt.Errorf("create %s: %w", cmdsDir, err)
 	}
 
-	content, err := renderSchema(m, opencodeCommandsDir, "AGENTS.md")
+	content, err := renderSchema(m, opencodeCommandsDir, opencodeCommandsTree, "AGENTS.md")
 	if err != nil {
 		return err
 	}
@@ -37,7 +38,7 @@ func (OpenCodeTool) Install(wikiRoot string, m *manifest.Manifest) error {
 		return fmt.Errorf("write AGENTS.md: %w", err)
 	}
 
-	return copyCommands(cmdsDir)
+	return copyCommandFiles(cmdsDir)
 }
 
 func (OpenCodeTool) Uninstall(wikiRoot string, m *manifest.Manifest) error {

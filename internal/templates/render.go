@@ -30,15 +30,16 @@ var pageTypeDescriptions = map[string]string{
 
 // SchemaData holds all values needed to render schema.md.template.
 type SchemaData struct {
-	WikiName        string
-	WikiSlug        string
-	Language        string
-	CreatedDate     string
-	PrimaryEntities []string
-	PageTypes       []string
-	Conventions     []string   // raw rule strings
-	CommandsDir     string     // e.g. ".claude/commands"
-	InstructionsFile string    // "CLAUDE.md" or "AGENTS.md"
+	WikiName         string
+	WikiSlug         string
+	Language         string
+	CreatedDate      string
+	PrimaryEntities  []string
+	PageTypes        []string
+	Conventions      []string // raw rule strings
+	CommandsDir      string   // e.g. ".claude/skills" — kept for schema replacer
+	CommandsTree     string   // pre-rendered directory tree for the commands section
+	InstructionsFile string   // "CLAUDE.md" or "AGENTS.md"
 }
 
 // RenderSchema renders schema.md.template with the provided data and returns
@@ -61,6 +62,7 @@ func RenderSchema(data SchemaData) (string, error) {
 		"{{PAGE_TYPES_DETAIL}}", buildPageTypesDetail(data.PageTypes),
 		"{{DOMAIN_CONVENTIONS}}", buildConventions(data.Conventions),
 		"{{COMMANDS_DIR}}", data.CommandsDir,
+		"{{COMMANDS_TREE}}", data.CommandsTree,
 		"{{INSTRUCTIONS_FILE}}", data.InstructionsFile,
 	)
 	return r.Replace(content), nil
