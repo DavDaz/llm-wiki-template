@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/DavDaz/llm-wiki-template/internal/cmd"
+	"github.com/DavDaz/llm-wiki-generator/internal/cmd"
 )
 
 func main() {

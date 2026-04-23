@@ -8,8 +8,8 @@ import (
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/DavDaz/llm-wiki-template/internal/generator"
-	"github.com/DavDaz/llm-wiki-template/internal/tui/styles"
+	"github.com/DavDaz/llm-wiki-generator/internal/generator"
+	"github.com/DavDaz/llm-wiki-generator/internal/tui/styles"
 )
 
 // Result holds the outcome of a completed wizard run.

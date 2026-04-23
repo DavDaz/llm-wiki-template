@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/DavDaz/llm-wiki-template/internal/manifest"
-	"github.com/DavDaz/llm-wiki-template/internal/templates"
+	"github.com/DavDaz/llm-wiki-generator/internal/manifest"
+	"github.com/DavDaz/llm-wiki-generator/internal/templates"
 )
 
 const claudeCommandsDir = ".claude/commands"

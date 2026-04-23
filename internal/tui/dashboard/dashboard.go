@@ -8,10 +8,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/DavDaz/llm-wiki-template/internal/generator"
-	"github.com/DavDaz/llm-wiki-template/internal/manifest"
-	"github.com/DavDaz/llm-wiki-template/internal/tools"
-	"github.com/DavDaz/llm-wiki-template/internal/tui/styles"
+	"github.com/DavDaz/llm-wiki-generator/internal/generator"
+	"github.com/DavDaz/llm-wiki-generator/internal/manifest"
+	"github.com/DavDaz/llm-wiki-generator/internal/tools"
+	"github.com/DavDaz/llm-wiki-generator/internal/tui/styles"
 )
 
 type toolEntry struct {

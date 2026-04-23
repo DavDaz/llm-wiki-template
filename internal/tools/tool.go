@@ -3,7 +3,7 @@
 package tools
 
 import (
-	"github.com/DavDaz/llm-wiki-template/internal/manifest"
+	"github.com/DavDaz/llm-wiki-generator/internal/manifest"
 )
 
 // ToolSupport defines the contract each AI tool backend must satisfy.

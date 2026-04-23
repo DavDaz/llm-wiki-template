@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/DavDaz/llm-wiki-template/internal/manifest"
+	"github.com/DavDaz/llm-wiki-generator/internal/manifest"
 )
 
 // loadManifestFromCwd loads wiki.toml from the current working directory.

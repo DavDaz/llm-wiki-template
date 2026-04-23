@@ -4,7 +4,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 
-	"github.com/DavDaz/llm-wiki-template/internal/tui/dashboard"
+	"github.com/DavDaz/llm-wiki-generator/internal/tui/dashboard"
 )
 
 var manageCmd = &cobra.Command{

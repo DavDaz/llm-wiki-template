@@ -4,7 +4,7 @@
 
 ---
 
-## Qué pregunta el setup y por qué
+## Qué pregunta el wizard y por qué
 
 ### Nombre del wiki
 
@@ -16,7 +16,7 @@ Puramente cosmético. Aparece en el título del schema, en `wiki/index.md` y en 
 
 Tiene dos usos concretos:
 
-1. **Nombre del directorio** que se crea (`banco-xyz-wiki/`)
+1. **Nombre del directorio** que se crea (`banco-xyz/`)
 2. **Campo `dominio:`** en el frontmatter de cada página generada
 
 ```yaml
@@ -55,7 +55,7 @@ Eso es todo el dominio. No importa si el primer documento que cargás habla solo
 
 **¿Qué pasa si surge una entidad nueva?**
 
-No necesitás re-ejecutar el setup. Abrís `CLAUDE.md` o `AGENTS.md` del wiki generado y la agregás en la sección `entidades_primarias` del YAML. Después corrés `/wiki-lint` para detectar si hay páginas existentes que la mencionan sin tener su propia entrada.
+No necesitás re-crear el wiki. Abrís `CLAUDE.md` o `AGENTS.md` y la agregás en la sección `entidades_primarias`. Después corrés `/wiki-lint` para detectar si hay páginas existentes que la mencionan sin tener su propia entrada.
 
 ---
 
@@ -72,7 +72,7 @@ Define la taxonomía del wiki. Cada página generada por la IA tiene exactamente
 | `regulacion` | Normativa legal con cita de fuente | `regulacion-tema.md` |
 | `reporte` | Generado automáticamente por `/wiki-lint` | `lint-YYYY-MM-DD.md` |
 
-Si tu dominio no tiene regulaciones legales, no incluyas el tipo `regulacion` — solo agrega ruido en las instrucciones. Podés agregar tipos personalizados si ninguno de los defaults aplica.
+El wizard pre-carga los tipos defaults (`proceso, referencia, entidad, politica`). Editá la lista para tu dominio — si no usás regulaciones legales, sacalo; si necesitás un tipo custom, agregalo.
 
 ---
 
@@ -86,7 +86,7 @@ Los expedientes siempre tienen un número único de 8 dígitos
 Los roles siempre listan sus permisos asociados explícitamente
 ```
 
-Si no tenés convenciones claras al inicio, dejalo vacío. Emergen naturalmente a medida que usás el wiki y encontrás inconsistencias. Cuando las identifiques, las agregás en la sección correspondiente del schema.
+Si no tenés convenciones claras al inicio, dejalo vacío. Emergen naturalmente a medida que usás el wiki y encontrás inconsistencias. Cuando las identifiques, las agregás directamente en `CLAUDE.md` / `AGENTS.md`.
 
 ---
 
@@ -144,14 +144,14 @@ Eso le da a la IA todo lo necesario para generar `anular-entrada.md` con frontma
 
 ## Cuándo evolucionar el schema
 
-El schema del dominio (`CLAUDE.md` o `AGENTS.md`) no es estático — está diseñado para crecer con el dominio. Editarlo es normal y esperado. Lo hacés cuando:
+El schema del dominio (`CLAUDE.md` o `AGENTS.md`) no es estático — está diseñado para crecer con el dominio. Editarlo es normal y esperado.
 
-| Situación | Qué hacer en el schema |
-|-----------|------------------------|
-| Aparece un concepto nuevo que siempre va a existir | Agregar a `entidades_primarias` |
-| Empezás a documentar un módulo nuevo con categorías propias | Agregar a `tipos_de_pagina` |
+| Situación | Qué hacer |
+|-----------|-----------|
+| Aparece un concepto nuevo que siempre va a existir | Agregar a `entidades_primarias` en el schema |
+| Empezás a documentar un módulo nuevo con categorías propias | Agregar a `tipos_de_pagina` en el schema |
 | Detectás que la IA siempre olvida algo importante | Agregar a `Convenciones específicas` |
-| Cambiás una convención existente | Editar la convención + agregar fila al historial de cambios |
+| Habilitás o deshabilitás un tool backend | `llm-wiki add-tool opencode` / `llm-wiki remove-tool pi` + `llm-wiki migrate` |
 
 Después de cualquier cambio en el schema, corré `/wiki-lint` para detectar páginas existentes que ya no cumplen las nuevas reglas.
 
@@ -160,10 +160,11 @@ Después de cualquier cambio en el schema, corré `/wiki-lint` para detectar pá
 ## El ciclo completo
 
 ```
-setup.sh                      → configurás el dominio una vez
-raw/ ← tus documentos         → tirás fuentes en cualquier momento
+llm-wiki init                 → configurás el dominio una vez
+raw/ ← tus documentos        → tirás fuentes en cualquier momento
 /wiki-ingest                  → la IA extrae y organiza el conocimiento
 /wiki-query                   → preguntás en lenguaje natural
 /wiki-lint                    → auditás consistencia periódicamente
-CLAUDE.md / AGENTS.md ← evoluciona → cuando el dominio cambia, no cuando agregás docs
+CLAUDE.md / AGENTS.md         → evoluciona cuando el dominio cambia
+llm-wiki manage               → gestionás tools sin tocar archivos
 ```

@@ -8,9 +8,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 
-	"github.com/DavDaz/llm-wiki-template/internal/tui/dashboard"
-	"github.com/DavDaz/llm-wiki-template/internal/tui/wizard"
-	"github.com/DavDaz/llm-wiki-template/internal/version"
+	"github.com/DavDaz/llm-wiki-generator/internal/tui/dashboard"
+	"github.com/DavDaz/llm-wiki-generator/internal/tui/wizard"
+	"github.com/DavDaz/llm-wiki-generator/internal/version"
 )
 
 var rootCmd = &cobra.Command{

@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/DavDaz/llm-wiki-template/internal/manifest"
+	"github.com/DavDaz/llm-wiki-generator/internal/manifest"
 )
 
 const piPromptsDir = ".pi/prompts"

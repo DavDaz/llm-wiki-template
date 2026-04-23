@@ -1,4 +1,4 @@
-module github.com/DavDaz/llm-wiki-template
+module github.com/DavDaz/llm-wiki-generator
 
 go 1.25.0
 

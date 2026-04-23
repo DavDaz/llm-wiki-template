@@ -53,7 +53,7 @@ func RenderSchema(data SchemaData) (string, error) {
 	r := strings.NewReplacer(
 		"{{WIKI_NAME}}", data.WikiName,
 		"{{WIKI_SLUG}}", data.WikiSlug,
-		"{{WIKI_ROOT}}", data.WikiSlug+"-wiki",
+		"{{WIKI_ROOT}}", data.WikiSlug,
 		"{{LANGUAGE}}", data.Language,
 		"{{CREATED_DATE}}", data.CreatedDate,
 		"{{ENTITIES_LIST}}", buildYAMLList(data.PrimaryEntities),

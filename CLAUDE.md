@@ -26,7 +26,7 @@ brew install llm-wiki
 O con Go:
 
 ```bash
-go install github.com/DavDaz/llm-wiki-template/cmd/llm-wiki@latest
+go install github.com/DavDaz/llm-wiki-generator/cmd/llm-wiki@latest
 ```
 
 ## Repositorios involucrados

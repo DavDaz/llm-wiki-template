@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/DavDaz/llm-wiki-template/internal/generator"
-	"github.com/DavDaz/llm-wiki-template/internal/tools"
+	"github.com/DavDaz/llm-wiki-generator/internal/generator"
+	"github.com/DavDaz/llm-wiki-generator/internal/tools"
 )
 
 var addToolCmd = &cobra.Command{

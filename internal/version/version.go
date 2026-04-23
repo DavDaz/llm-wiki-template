@@ -3,5 +3,5 @@ package version
 
 // Version is set at build time via:
 //
-//	go build -ldflags "-X 'github.com/DavDaz/llm-wiki-template/internal/version.Version=v1.0.0'"
+//	go build -ldflags "-X 'github.com/DavDaz/llm-wiki-generator/internal/version.Version=v1.0.0'"
 var Version = "dev"

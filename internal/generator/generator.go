@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/DavDaz/llm-wiki-template/internal/manifest"
-	"github.com/DavDaz/llm-wiki-template/internal/templates"
-	"github.com/DavDaz/llm-wiki-template/internal/tools"
+	"github.com/DavDaz/llm-wiki-generator/internal/manifest"
+	"github.com/DavDaz/llm-wiki-generator/internal/templates"
+	"github.com/DavDaz/llm-wiki-generator/internal/tools"
 )
 
 // InitConfig holds the parameters for creating a new wiki.

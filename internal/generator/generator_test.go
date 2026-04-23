@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/DavDaz/llm-wiki-template/internal/generator"
-	"github.com/DavDaz/llm-wiki-template/internal/manifest"
+	"github.com/DavDaz/llm-wiki-generator/internal/generator"
+	"github.com/DavDaz/llm-wiki-generator/internal/manifest"
 )
 
 func defaultCfg(dir string) generator.InitConfig {

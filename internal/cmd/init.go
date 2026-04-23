@@ -8,8 +8,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 
-	"github.com/DavDaz/llm-wiki-template/internal/generator"
-	"github.com/DavDaz/llm-wiki-template/internal/tui/wizard"
+	"github.com/DavDaz/llm-wiki-generator/internal/generator"
+	"github.com/DavDaz/llm-wiki-generator/internal/tui/wizard"
 )
 
 var initCmd = &cobra.Command{
