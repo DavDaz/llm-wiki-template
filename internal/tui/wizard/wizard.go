@@ -21,12 +21,14 @@ type Result struct {
 // formValues holds all mutable form field values behind a pointer so they
 // survive Bubbletea's copy semantics when the Model is passed by value.
 type formValues struct {
-	name      string
-	slug      string
-	language  string
-	tools     []string
-	entities  string
-	confirmed bool
+	name        string
+	slug        string
+	language    string
+	tools       []string
+	entities    string
+	pageTypes   string
+	conventions string
+	confirmed   bool
 }
 
 // Model is the Bubbletea model for the init wizard.
@@ -42,7 +44,10 @@ type Model struct {
 // New creates a new wizard Model. parentDir is the directory where the wiki
 // will be created (empty string = current directory).
 func New(parentDir string) Model {
-	v := &formValues{language: "es"}
+	v := &formValues{
+		language:  "es",
+		pageTypes: "proceso, referencia, entidad, politica",
+	}
 	return Model{
 		parentDir: parentDir,
 		values:    v,
@@ -89,6 +94,18 @@ func buildForm(v *formValues) *huh.Form {
 				Description("Comma-separated domain entities (optional)").
 				Placeholder("usuario, rol, permiso").
 				Value(&v.entities),
+		),
+		huh.NewGroup(
+			huh.NewInput().
+				Title("Page types").
+				Description("Comma-separated content types for this wiki").
+				Value(&v.pageTypes),
+
+			huh.NewInput().
+				Title("Domain conventions").
+				Description("Comma-separated rules the AI must enforce (optional)").
+				Placeholder("Citar fuente en fuentes:, No abreviar nombres").
+				Value(&v.conventions),
 		),
 		huh.NewGroup(
 			huh.NewConfirm().
@@ -170,6 +187,10 @@ func (m Model) GetResult() Result {
 
 func create(v *formValues, parentDir string) (string, error) {
 	claude, opencode, pi := resolveTools(v.tools)
+	pageTypes := parseCSV(v.pageTypes)
+	if len(pageTypes) == 0 {
+		pageTypes = []string{"proceso", "referencia", "entidad", "politica"}
+	}
 	cfg := generator.InitConfig{
 		ParentDir:       parentDir,
 		Name:            v.name,
@@ -179,7 +200,8 @@ func create(v *formValues, parentDir string) (string, error) {
 		OpenCode:        opencode,
 		Pi:              pi,
 		PrimaryEntities: parseCSV(v.entities),
-		PageTypes:       []string{"proceso", "referencia", "entidad", "politica"},
+		PageTypes:       pageTypes,
+		Conventions:     parseCSV(v.conventions),
 	}
 	return generator.Init(cfg)
 }
