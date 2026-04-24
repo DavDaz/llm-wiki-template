@@ -157,6 +157,41 @@ Después de cualquier cambio en el schema, corré `/wiki-lint` para detectar pá
 
 ---
 
+## Agente local con Ollama
+
+Si usás OpenCode o Pi con Ollama, podés crear un modelo especializado (`gpt-oss-wiki-agent`) que tiene el protocolo del wiki integrado en su system prompt. La diferencia con un modelo genérico:
+
+| Modelo genérico | gpt-oss-wiki-agent |
+|---|---|
+| Tenés que explicarle el sistema cada sesión | Ya sabe todo — abrís y operás |
+| Puede responder de memoria (sin leer el wiki) | Está instruido para NUNCA responder sin leer primero |
+| Puede "ayudar" con cosas ajenas al wiki | Rechaza explícitamente cualquier cosa fuera de scope |
+| El routing al comando correcto depende del usuario | Hace el routing automáticamente según el mensaje |
+
+**Cómo funciona la combinación:**
+
+```
+Sistema prompt del Modelfile   →  sabe CÓMO operar el wiki (protocolos)
+AGENTS.md / CLAUDE.md          →  sabe QUÉ es este wiki específico (dominio)
+.pi/prompts/ o .opencode/commands/  →  las instrucciones detalladas de cada comando
+```
+
+Las tres capas se complementan. El Modelfile pone el marco general ("sos un agente de wiki, no hacés otra cosa"). El schema del dominio pone el contexto específico ("este wiki es sobre MIDES RENAB, las entidades son usuario, rol, permiso"). Los comandos ponen el protocolo paso a paso de cada operación.
+
+**Crear el modelo:**
+
+```bash
+# Desde la raíz del repositorio llm-wiki
+ollama create gpt-oss-wiki-agent -f ollama/wiki-agent.modelfile
+
+# Verificar capabilities
+ollama show gpt-oss-wiki-agent
+```
+
+**Nota de temperatura:** el Modelfile usa `temperature 0.2` — deliberadamente bajo. Para operaciones de wiki querés precisión y reproducibilidad, no creatividad. El modelo siempre va a seguir el protocolo en lugar de improvisar.
+
+---
+
 ## El ciclo completo
 
 ```

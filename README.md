@@ -138,6 +138,32 @@ flowchart TD
 
 ---
 
+## Agente local con Ollama (opcional)
+
+Si usás **OpenCode o Pi con Ollama**, podés crear un modelo especializado que ya sabe exactamente cómo operar el wiki — sin tener que explicarle nada cada vez que lo abrís.
+
+```bash
+# Requiere Ollama con gpt-oss:20b descargado
+ollama create gpt-oss-wiki-agent -f ollama/wiki-agent.modelfile
+```
+
+El modelo tiene el sistema de instrucciones del wiki integrado: sabe que si le hacés una pregunta sobre el dominio tiene que ejecutar `/wiki-query`, si le decís que hay un archivo en `raw/` ejecuta `/wiki-ingest`, si pedís una auditoría ejecuta `/wiki-lint`. Rechaza cualquier consulta fuera del scope del wiki.
+
+**Verificar que quedó bien:**
+
+```bash
+ollama show gpt-oss-wiki-agent
+# Capabilities: completion · tools · thinking ✓
+```
+
+**Usar con OpenCode o Pi:**
+
+Apuntá el tool al modelo `gpt-oss-wiki-agent` en tu configuración de Ollama. Los comandos en `.opencode/commands/` y `.pi/prompts/` funcionan igual — el sistema prompt del Modelfile amplía lo que el agente ya sabe.
+
+> Ver `ollama/wiki-agent.modelfile` para el sistema prompt completo y los parámetros.
+
+---
+
 ## Flujo de trabajo diario
 
 ### Agregar conocimiento nuevo
