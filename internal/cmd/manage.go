@@ -18,12 +18,12 @@ func init() {
 }
 
 func runManage(_ *cobra.Command, _ []string) error {
-	m, wikiRoot, err := loadManifestFromCwd()
+	_, wikiRoot, err := loadManifestFromCwd()
 	if err != nil {
 		return err
 	}
-	d := dashboard.New(m, wikiRoot)
-	p := tea.NewProgram(d, tea.WithAltScreen())
+	root := dashboard.NewRoot(wikiRoot)
+	p := tea.NewProgram(root, tea.WithAltScreen())
 	_, err = p.Run()
 	return err
 }
