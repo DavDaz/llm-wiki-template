@@ -40,6 +40,12 @@ func New(m *manifest.Manifest, wikiRoot string) Model {
 	return d
 }
 
+// NewTools returns the tools dashboard as a sub-view model.
+func NewTools(m *manifest.Manifest, wikiRoot string) tea.Model {
+	d := New(m, wikiRoot)
+	return &d
+}
+
 func buildToolItems(m *manifest.Manifest, wikiRoot string) []toolEntry {
 	all := tools.All()
 	items := make([]toolEntry, len(all))
@@ -69,12 +75,12 @@ func (d Model) Init() tea.Cmd {
 	return nil
 }
 
-func (d Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (d *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "q", "ctrl+c":
-			return d, tea.Quit
+		case "q", "esc":
+			return d, BackToRoot()
 
 		case "up", "k":
 			if d.cursor > 0 {

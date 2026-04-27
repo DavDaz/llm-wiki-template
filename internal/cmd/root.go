@@ -47,7 +47,7 @@ var versionCmd = &cobra.Command{
 func runRoot(_ *cobra.Command, _ []string) error {
 	m, wikiRoot, err := loadManifestFromCwd()
 	if err == nil {
-		d := dashboard.New(m, wikiRoot)
+		d := dashboard.NewTools(m, wikiRoot)
 		p := tea.NewProgram(d, tea.WithAltScreen())
 		_, runErr := p.Run()
 		return runErr
