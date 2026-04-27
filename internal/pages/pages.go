@@ -46,6 +46,9 @@ func List(wikiDir string) ([]Page, int, error) {
 		if filepath.Ext(entry.Name()) != ".md" {
 			continue
 		}
+		if isReservedWikiFile(entry.Name()) {
+			continue
+		}
 
 		absPath, err := filepath.Abs(filepath.Join(wikiDir, entry.Name()))
 		if err != nil {
@@ -68,6 +71,15 @@ func List(wikiDir string) ([]Page, int, error) {
 	}
 
 	return result, skipped, nil
+}
+
+func isReservedWikiFile(name string) bool {
+	switch strings.ToLower(name) {
+	case "index.md", "log.md":
+		return true
+	default:
+		return false
+	}
 }
 
 // FilterByStatus returns pages with matching status, preserving order.

@@ -52,6 +52,21 @@ func TestList(t *testing.T) {
 		assert.Equal(t, 0, skipped)
 	})
 
+	t.Run("ignores reserved wiki files", func(t *testing.T) {
+		dir := t.TempDir()
+
+		writeFile(t, filepath.Join(dir, "index.md"), "# index\n")
+		writeFile(t, filepath.Join(dir, "log.md"), "# log\n")
+		writeFile(t, filepath.Join(dir, "draft.md"), "---\ntitulo: Draft\nstatus: borrador\n---\n")
+		writeFile(t, filepath.Join(dir, "bad.md"), "# malformed\n")
+
+		got, skipped, err := List(dir)
+		require.NoError(t, err)
+		require.Len(t, got, 1)
+		assert.Equal(t, "Draft", got[0].Title)
+		assert.Equal(t, 1, skipped)
+	})
+
 	t.Run("missing dir returns error", func(t *testing.T) {
 		_, _, err := List(filepath.Join(t.TempDir(), "missing"))
 		require.Error(t, err)
