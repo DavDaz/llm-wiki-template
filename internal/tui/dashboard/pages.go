@@ -46,19 +46,36 @@ func NewPagesView(wikiDir string, filter pages.Status) tea.Model {
 	return m
 }
 
-func newPickForm(v *pickValues) *huh.Form {
+func newPickForm(v *pickValues, current pages.Status) *huh.Form {
 	return huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
 				Title("Change status to:").
-				Options(
-					huh.NewOption("vigente", "vigente"),
-					huh.NewOption("deprecado", "deprecado"),
-					huh.NewOption("cancel", "cancel"),
-				).
+				Options(statusTargets(current)...).
 				Value(&v.choice),
 		),
 	).WithTheme(huh.ThemeCatppuccin())
+}
+
+func statusTargets(current pages.Status) []huh.Option[string] {
+	ordered := []pages.Status{pages.StatusBorrador, pages.StatusVigente, pages.StatusDeprecado}
+	targets := make([]huh.Option[string], 0, len(ordered))
+	for _, status := range ordered {
+		if status == current {
+			continue
+		}
+		targets = append(targets, huh.NewOption(string(status), string(status)))
+	}
+	return append(targets, huh.NewOption("cancel", "cancel"))
+}
+
+func defaultStatusTarget(current pages.Status) string {
+	for _, status := range []pages.Status{pages.StatusBorrador, pages.StatusVigente, pages.StatusDeprecado} {
+		if status != current {
+			return string(status)
+		}
+	}
+	return "cancel"
 }
 
 func (m *pagesModel) Init() tea.Cmd {
@@ -126,8 +143,8 @@ func (m *pagesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if len(m.list) == 0 {
 				return m, nil
 			}
-			m.pickVals = &pickValues{choice: "vigente"}
-			m.pickForm = newPickForm(m.pickVals)
+			m.pickVals = &pickValues{choice: defaultStatusTarget(m.list[m.cursor].Status)}
+			m.pickForm = newPickForm(m.pickVals, m.list[m.cursor].Status)
 			m.picking = true
 			m.errMsg = ""
 			return m, m.pickForm.Init()
@@ -139,7 +156,7 @@ func (m *pagesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m *pagesModel) View() string {
 	var b strings.Builder
-	b.WriteString(styles.Title.Render("Drafts (status: " + string(m.filter) + ")"))
+	b.WriteString(styles.Title.Render("Pages (status: " + string(m.filter) + ")"))
 	b.WriteString("\n")
 
 	if m.errMsg != "" {
@@ -157,7 +174,7 @@ func (m *pagesModel) View() string {
 	}
 
 	if len(m.list) == 0 {
-		b.WriteString("  No drafts found.\n")
+		b.WriteString(fmt.Sprintf("  No pages with status %s found.\n", m.filter))
 		b.WriteString(styles.KeyHint.Render("  [esc] back"))
 		b.WriteString("\n")
 	} else {

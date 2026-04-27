@@ -64,9 +64,15 @@ func writeWikiFixture(t *testing.T) string {
 	wikiDir := filepath.Join(root, "wiki")
 	require.NoError(t, os.MkdirAll(wikiDir, 0o755))
 
-	require.NoError(t, os.WriteFile(filepath.Join(wikiDir, "draft.md"), []byte("---\ntitulo: Draft\ntipo: referencia\nstatus: borrador\nactualizado: 2026-01-01\n---\n# draft\n"), 0o644))
-	require.NoError(t, os.WriteFile(filepath.Join(wikiDir, "vigente.md"), []byte("---\ntitulo: Live\ntipo: referencia\nstatus: vigente\nactualizado: 2026-01-01\n---\n# live\n"), 0o644))
+	writeFixturePage(t, wikiDir, "draft.md", "Draft", "borrador")
+	writeFixturePage(t, wikiDir, "vigente.md", "Live", "vigente")
 	require.NoError(t, os.WriteFile(filepath.Join(wikiDir, "bad.md"), []byte("# invalid"), 0o644))
 
 	return root
+}
+
+func writeFixturePage(t *testing.T, wikiDir, fileName, title, status string) {
+	t.Helper()
+	buf := []byte("---\ntitulo: " + title + "\ntipo: referencia\nstatus: " + status + "\nactualizado: 2026-01-01\n---\n# " + title + "\n")
+	require.NoError(t, os.WriteFile(filepath.Join(wikiDir, fileName), buf, 0o644))
 }

@@ -31,6 +31,8 @@ type rootMenuOption struct {
 var rootMenuOptions = []rootMenuOption{
 	{label: "Tools backends", value: "tools"},
 	{label: "Drafts (status: borrador)", value: "drafts"},
+	{label: "Published (status: vigente)", value: "published"},
+	{label: "Deprecated (status: deprecado)", value: "deprecated"},
 	{label: "Exit", value: "exit"},
 }
 
@@ -116,6 +118,14 @@ func (m *rootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, m.active.Init()
 			case "drafts":
 				m.active = NewPagesView(m.wikiDir, pages.StatusBorrador)
+				m.state = stateSubView
+				return m, m.active.Init()
+			case "published":
+				m.active = NewPagesView(m.wikiDir, pages.StatusVigente)
+				m.state = stateSubView
+				return m, m.active.Init()
+			case "deprecated":
+				m.active = NewPagesView(m.wikiDir, pages.StatusDeprecado)
 				m.state = stateSubView
 				return m, m.active.Init()
 			case "exit":

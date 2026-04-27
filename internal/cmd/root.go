@@ -25,6 +25,11 @@ that supports Claude Code, OpenCode, and Pi as AI tool backends.`,
 	RunE:         runRoot,
 }
 
+var runProgram = func(model tea.Model, opts ...tea.ProgramOption) (tea.Model, error) {
+	p := tea.NewProgram(model, opts...)
+	return p.Run()
+}
+
 // Execute is the entry point called by main.
 func Execute() error {
 	return rootCmd.Execute()
@@ -48,16 +53,14 @@ func runRoot(_ *cobra.Command, _ []string) error {
 	m, wikiRoot, err := loadManifestFromCwd()
 	if err == nil {
 		d := dashboard.NewTools(m, wikiRoot)
-		p := tea.NewProgram(d, tea.WithAltScreen())
-		_, runErr := p.Run()
+		_, runErr := runProgram(d, tea.WithAltScreen())
 		return runErr
 	}
 
 	// Outside a wiki — loop so guide can return to the launcher.
 	for {
 		l := launcher.New()
-		p := tea.NewProgram(l, tea.WithAltScreen())
-		final, runErr := p.Run()
+		final, runErr := runProgram(l, tea.WithAltScreen())
 		if runErr != nil {
 			return runErr
 		}
@@ -85,8 +88,7 @@ func runRoot(_ *cobra.Command, _ []string) error {
 func runInitWizard() error {
 	parentDir, _ := os.Getwd()
 	wiz := wizard.New(parentDir)
-	p := tea.NewProgram(wiz, tea.WithAltScreen())
-	final, err := p.Run()
+	final, err := runProgram(wiz, tea.WithAltScreen())
 	if err != nil {
 		return err
 	}

@@ -50,12 +50,22 @@ Al terminar tenés un directorio listo con `CLAUDE.md` / `AGENTS.md` configurado
 ## Gestionar un wiki existente
 
 ```bash
-# Abre el dashboard TUI (toggle de tools, migrate)
+# Abre el dashboard TUI de gestión (tools + estados de páginas)
 cd tu-wiki/
 llm-wiki manage
-# o simplemente:
+# Si ejecutás sin argumentos dentro del wiki:
 llm-wiki
 ```
+
+`llm-wiki manage` muestra un menú raíz con:
+- Tools backends
+- Drafts (`status: borrador`)
+- Published (`status: vigente`)
+- Deprecated (`status: deprecado`)
+
+En cada bucket de páginas podés cambiar status con opciones contextuales: nunca aparece el status actual, siempre aparece `cancel`.
+
+> Nota: el flujo sin argumentos (`llm-wiki`) mantiene su routing actual y no forma parte de este cambio.
 
 ### Comandos headless
 
