@@ -28,6 +28,7 @@ tipos_de_pagina:
 ├── wiki/
 │   ├── index.md       ← catálogo central, una línea por página
 │   ├── log.md         ← historial append-only de operaciones
+│   ├── sources.json   ← estado operativo de fuentes (huella + páginas tocadas)
 │   └── [páginas].md   ← conocimiento compilado
 {{COMMANDS_TREE}}
 ```
@@ -125,8 +126,23 @@ El rol Supervisor puede [[crear-usuario]].
 
 Cuando se ejecuta `/wiki-ingest`:
 
-1. **Leer** todos los archivos nuevos en `raw/` que no aparezcan aún en `log.md`
-2. **Por cada archivo fuente:**
+### Modo A — sin argumento (`/wiki-ingest`)
+
+1. **Leer** `wiki/log.md` y procesar solo archivos en `raw/` que no estén registrados en el log
+2. **No** re-procesar fuentes ya registradas cuando se ejecuta sin argumento
+3. Si no hay fuentes nuevas → informar y detener
+
+### Modo B — con archivo objetivo (`/wiki-ingest raw/archivo.ext`)
+
+1. Validar que el archivo objetivo exista en `raw/`
+2. Leer/crear `wiki/sources.json` (si no existe, inicializar con `{ "schema_version": 1, "sources": {} }`)
+3. Calcular una huella determinística del archivo objetivo (`fingerprint`)
+4. Si el archivo ya está en `sources.json` y su `fingerprint` no cambió → informar "sin cambios" y detener
+5. Si cambió o no existe en `sources.json` → procesar SOLO ese archivo
+
+### Escritura (aplica a ambos modos)
+
+1. **Por cada archivo fuente a procesar:**
    a. Identificar qué entidades, procesos y referencias menciona
    b. Por cada concepto identificado:
       - Buscar en `index.md` si ya existe una página con ese concepto
@@ -134,7 +150,11 @@ Cuando se ejecuta `/wiki-ingest`:
       - Si no existe → crear página nueva con frontmatter completo
    c. Agregar `[[wikilinks]]` bidireccionales entre páginas relacionadas
    d. Si hay contradicción con contenido existente → anotar con bloque `> ⚠️ Contradicción detectada: [descripción]` y `confianza: baja`
-3. **Actualizar** `wiki/index.md` con cada página nueva o modificada
+2. **Actualizar** `wiki/index.md` con cada página nueva o modificada
+3. **Actualizar** `wiki/sources.json` para cada fuente procesada:
+   - `fingerprint`
+   - `processed_at`
+   - `pages_touched` (lista de páginas creadas/actualizadas)
 4. **Registrar** en `wiki/log.md` con formato append:
    ```
    ## YYYY-MM-DD HH:MM — ingest

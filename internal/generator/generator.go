@@ -78,12 +78,15 @@ func Init(cfg InitConfig) (wikiRoot string, err error) {
 		return "", err
 	}
 
-	// Write wiki/index.md and wiki/log.md.
+	// Write wiki/index.md, wiki/log.md, and wiki/sources.json.
 	if err := writeFile(filepath.Join(wikiRoot, "wiki", "index.md"), templates.RenderIndex(cfg.Name)); err != nil {
 		return "", err
 	}
 	if err := writeFile(filepath.Join(wikiRoot, "wiki", "log.md"),
 		templates.RenderLog(cfg.Name, cfg.Slug, time.Now().Format("2006-01-02"), cfg.PrimaryEntities, m.Domain.PageTypes)); err != nil {
+		return "", err
+	}
+	if err := writeFile(filepath.Join(wikiRoot, "wiki", "sources.json"), templates.RenderSourcesRegistry()); err != nil {
 		return "", err
 	}
 

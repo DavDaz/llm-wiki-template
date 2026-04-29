@@ -98,6 +98,16 @@ func RenderLog(wikiName, wikiSlug, createdDate string, entities, pageTypes []str
 		"---\n"
 }
 
+// RenderSourcesRegistry returns the initial wiki/sources.json content.
+// This file is the mutable operational state used by /wiki-ingest to detect
+// whether a known source changed and should be reprocessed.
+func RenderSourcesRegistry() string {
+	return "{\n" +
+		"  \"schema_version\": 1,\n" +
+		"  \"sources\": {}\n" +
+		"}\n"
+}
+
 // buildYAMLList converts a string slice to a YAML block list ("  - item\n").
 func buildYAMLList(items []string) string {
 	var sb strings.Builder

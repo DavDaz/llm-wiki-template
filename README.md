@@ -97,7 +97,7 @@ flowchart TD
     E --> F["Wiki listo\ncon estructura completa"]
 
     F --> G["📂 raw/\nVacío — tus fuentes van aquí"]
-    F --> H["📂 wiki/\nindex.md · log.md vacíos"]
+    F --> H["📂 wiki/\nindex.md · log.md · sources.json"]
     F --> I["⚙️ commands/\nwiki-ingest · wiki-query · wiki-lint"]
     F --> J["🧠 CLAUDE.md / AGENTS.md\nCerebro del sistema"]
 
@@ -116,7 +116,7 @@ flowchart TD
 
     subgraph IA ["La IA hace esto automáticamente"]
         C --> D["Lee el schema\n(reglas del dominio)"]
-        D --> E["Lee wiki/log.md\n(¿ya fue procesado?)"]
+        D --> E["Lee wiki/log.md\n(y sources.json en modo dirigido)"]
         E --> F["Analiza el documento\ne identifica conceptos"]
         F --> G{"¿Existe una página\npara este concepto?"}
         G -- "Sí" --> H["Actualiza página\nexistente"]
@@ -183,6 +183,9 @@ cp mi-manual.pdf tu-wiki/raw/
 
 # En Claude Code, OpenCode o Pi:
 /wiki-ingest
+
+# Reprocesar una fuente específica (sin releer todo raw/):
+/wiki-ingest raw/manual-operativo.md
 ```
 
 ### Hacer preguntas
@@ -218,7 +221,11 @@ Catálogo central. Una línea por página. La IA lo lee primero en cada query.
 
 ### `wiki/log.md`
 
-Historial append-only de todas las operaciones. Sirve para saber qué fuentes ya fueron procesadas.
+Historial append-only de todas las operaciones. Sirve como auditoría de qué se procesó y cuándo.
+
+### `wiki/sources.json`
+
+Estado operativo de ingest por fuente (`fingerprint`, `processed_at`, `pages_touched`). Permite reprocesar un archivo puntual solo cuando cambió, sin barrer todo `raw/`.
 
 ---
 

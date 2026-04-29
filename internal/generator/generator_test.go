@@ -41,6 +41,7 @@ func TestInit_ClaudeCodeOnly(t *testing.T) {
 	assertExists(t, filepath.Join(wikiRoot, "raw"))
 	assertExists(t, filepath.Join(wikiRoot, "wiki", "index.md"))
 	assertExists(t, filepath.Join(wikiRoot, "wiki", "log.md"))
+	assertExists(t, filepath.Join(wikiRoot, "wiki", "sources.json"))
 	assertExists(t, filepath.Join(wikiRoot, "wiki.toml"))
 	assertExists(t, filepath.Join(wikiRoot, ".gitignore"))
 
@@ -74,6 +75,11 @@ func TestInit_ClaudeCodeOnly(t *testing.T) {
 	// log.md must mention the domain.
 	logContent := readFile(t, filepath.Join(wikiRoot, "wiki", "log.md"))
 	assert.Contains(t, logContent, "legal-wiki")
+
+	// sources.json must initialize source registry.
+	sourcesContent := readFile(t, filepath.Join(wikiRoot, "wiki", "sources.json"))
+	assert.Contains(t, sourcesContent, "\"schema_version\": 1")
+	assert.Contains(t, sourcesContent, "\"sources\": {}")
 
 	// index.md must have the table header.
 	indexContent := readFile(t, filepath.Join(wikiRoot, "wiki", "index.md"))

@@ -140,6 +140,18 @@ El asiento de contrapartida queda en estado "borrador" hasta aprobación.
 
 Eso le da a la IA todo lo necesario para generar `anular-entrada.md` con frontmatter correcto y `confianza: alta`.
 
+### Reprocesar una fuente sin crear `-v2`, `-v3`, ...
+
+Cuando actualizás una fuente ya procesada, no necesitás llenar `raw/` con versiones nuevas.
+
+Usá ingest dirigido:
+
+```bash
+/wiki-ingest raw/manual-operativo.md
+```
+
+El sistema mantiene `wiki/sources.json` con una huella (`fingerprint`) por archivo. Si la huella no cambió, corta rápido. Si cambió, reprocesa solo ese archivo y actualiza las páginas relacionadas.
+
 ---
 
 ## Cuándo evolucionar el schema

@@ -109,7 +109,9 @@ Antes de ejecutar cualquier comando, leer el schema del dominio:
 
 ### /wiki-ingest [archivo-opcional]
 
-Procesás archivos nuevos en raw/ y los compilás en wiki/.
+Compilás conocimiento desde raw/ hacia wiki/ en dos modos:
+- /wiki-ingest → automático (solo fuentes nuevas)
+- /wiki-ingest raw/archivo.ext → dirigido (solo ese archivo)
 
 **Cuándo ejecutarlo automáticamente** (sin que te lo pidan explícitamente):
 - "hay un documento nuevo en raw/"
@@ -119,18 +121,22 @@ Procesás archivos nuevos en raw/ y los compilás en wiki/.
 - "incorporá este contenido al wiki"
 
 **Protocolo:**
-1. Leer wiki/log.md para obtener archivos ya procesados
-2. Listar raw/ y detectar archivos NO presentes en el log
-3. Si no hay archivos nuevos → decirlo y detenerse
+1. Determinar modo:
+   - Sin argumento: leer wiki/log.md, detectar solo raw/ no presentes en el log
+   - Con archivo: validar objetivo en raw/, procesar SOLO ese archivo
+2. En modo dirigido, leer/crear wiki/sources.json y calcular fingerprint del archivo objetivo
+3. En modo dirigido, si el fingerprint no cambió y no hay --force → informar "sin cambios" y detener
 4. Mostrar análisis al usuario ANTES de escribir: qué páginas vas a crear/actualizar, qué contradicciones detectás → pedir confirmación
-5. Crear páginas en wiki/ con el frontmatter completo obligatorio
+5. Crear/actualizar páginas en wiki/ con frontmatter obligatorio
 6. Actualizar wiki/index.md con una línea por página tocada
-7. Registrar la operación en wiki/log.md (append-only, nunca modificar entradas anteriores)
+7. Actualizar wiki/sources.json para cada fuente procesada (fingerprint, processed_at, pages_touched)
+8. Registrar la operación en wiki/log.md (append-only, nunca modificar entradas anteriores)
 
 **Nunca:**
 - Modificar o borrar archivos en raw/
 - Crear páginas sin frontmatter
 - Ignorar contradicciones sin anotarlas
+- Reprocesar todo raw/ cuando el usuario pidió un archivo puntual
 
 ---
 
@@ -209,6 +215,7 @@ Auditás el wiki completo y generás un reporte de salud con severidades.
 ├── wiki/
 │   ├── index.md           ← catálogo central (una línea por página)
 │   ├── log.md             ← historial append-only de operaciones
+│   ├── sources.json       ← estado operativo de fuentes (fingerprints)
 │   └── [páginas].md       ← conocimiento compilado
 └── .claude/skills/ o .opencode/commands/ o .pi/prompts/
     └── (estos comandos)
